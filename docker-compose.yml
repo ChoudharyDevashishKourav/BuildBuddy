@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: buildbuddy-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: buildbuddy_db
+      MYSQL_USER: buildbuddy
+      MYSQL_PASSWORD: buildbuddy123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - buildbuddy-network
+
+  backend:
+    build: .
+    container_name: buildbuddy-backend
+    environment:
+      DB_USERNAME: buildbuddy
+      DB_PASSWORD: buildbuddy123
+      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      MAIL_USERNAME: your-email@gmail.com
+      MAIL_PASSWORD: your-app-password
+      CLOUDINARY_CLOUD_NAME: your-cloud-name
+      CLOUDINARY_API_KEY: your-api-key
+      CLOUDINARY_API_SECRET: your-api-secret
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - buildbuddy-network
+
+volumes:
+  mysql_data:
+
+networks:
+  buildbuddy-network:
+    driver: bridge
