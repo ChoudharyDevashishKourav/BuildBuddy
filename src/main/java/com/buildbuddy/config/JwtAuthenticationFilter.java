@@ -2,6 +2,7 @@ package com.buildbuddy.config;
 
 import com.buildbuddy.auth.service.CustomUserDetailsService;
 import com.buildbuddy.auth.service.JwtService;
+import com.buildbuddy.user.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
+    private final UserService userService;
     
     @Override
     protected void doFilterInternal(
@@ -41,10 +44,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         jwt = authHeader.substring(7);
         userId = jwtService.extractUsername(jwt);
-        
+
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userId);
-            
+            UserDetails userDetails = this.userDetailsService.loadUserById(userId);
+
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,

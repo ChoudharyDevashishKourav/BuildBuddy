@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/teams").permitAll()
                         .requestMatchers("/api/teams/{id}").permitAll()
                         .requestMatchers("/api/users/{id}").permitAll()
+                        .requestMatchers("/health").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
