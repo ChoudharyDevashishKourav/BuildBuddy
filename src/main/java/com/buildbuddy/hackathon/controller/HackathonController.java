@@ -1,6 +1,7 @@
 package com.buildbuddy.hackathon.controller;
 
 import com.buildbuddy.common.dto.ApiResponse;
+import com.buildbuddy.hackathon.dto.ExternalHackathonResponse;
 import com.buildbuddy.hackathon.dto.HackathonResponse;
 import com.buildbuddy.hackathon.service.HackathonService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/hackathons")
@@ -29,11 +33,18 @@ public class HackathonController {
         Page<HackathonResponse> hackathons = hackathonService.getAllHackathons(platform, pageRequest);
         return ResponseEntity.ok(ApiResponse.success(hackathons));
     }
-    
+
     @PostMapping("/sync")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> syncHackathons() {
-        // Implement hackathon sync logic here (e.g., API scraping)
-        return ResponseEntity.ok(ApiResponse.success("Hackathons synced successfully", null));
+        // Todo: Delete Hackathons which are finished, update everyday hackathons
+        String result = hackathonService.syncExternalHackathons();
+        return ResponseEntity.ok(ApiResponse.success(result, null));
+    }
+
+    @GetMapping("/external")
+    public ResponseEntity<ApiResponse<Map<String, List<ExternalHackathonResponse>>>> getExternalHackathons() {
+        Map<String, List<ExternalHackathonResponse>> hackathons = hackathonService.fetchExternalHackathons();
+        return ResponseEntity.ok(ApiResponse.success(hackathons));
     }
 }
