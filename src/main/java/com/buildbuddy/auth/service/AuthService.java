@@ -27,7 +27,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final CustomUserDetailsService  userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
     private final EmailService emailService;
     
     @Transactional
